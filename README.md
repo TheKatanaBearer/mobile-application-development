@@ -29,7 +29,7 @@
 
 ## Reflection — What does setState() do?
 
-Flutter builds the screen one time and then stops watching your variables. So when a variable like the counter changes, Flutter has no idea and the screen stays the same. setState() is how you tell Flutter that something changed and it needs to rebuild the screen. Without calling setState(), the variable updates in memory but nothing actually changes visually — the app looks frozen even though the value is different underneath.
+Flutter builds the screen once and then stops watching my variables. So when a variable changes like the counter change, Flutter then has no idea about it and the screen stays the same. setState() is how I tell Flutter that something has changed and it needs to buil the screen again. Without calling setState(), the variable updates in memory but nothing actually changes visually....the app looks frozen even though the value is different under it.
 
 ---
 
