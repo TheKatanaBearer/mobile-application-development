@@ -14,7 +14,7 @@
 
 ## Screenshot
 
-![App Screenshot](screenshot.png)
+![App Screenshot](lab_task_1/Screenshot%202026-09-11%20153639.png)
 
 ---
 
