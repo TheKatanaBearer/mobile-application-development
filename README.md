@@ -34,3 +34,25 @@ Flutter builds the screen one time and then stops watching your variables. So wh
 ---
 
 *Built by Hamza Khan Tariq · 04072313050*
+
+
+# Lab Task 2 — Course Roster Console App
+
+**Name:** Hamza Khan Tariq
+**Course:** CS442 - Mobile Application Development
+**Date:** September 21, 2026
+
+## About
+A Dart console app built as part of Lab Task 2, exercising core Dart fundamentals from Session 1.
+
+## Parts Completed
+- ✅ Part 1 — Setup & Welcome
+- ✅ Part 2 — Course & Roster Data
+- ✅ Part 3 — Null-Safe Instructor Info
+- ✅ Part 4 — Formatting Strings
+- ✅ Part 5 — Operators in Action
+- ✅ Part 6 — Enrollment Logic
+- ✅ Part 7 — Reports & Loops
+- ✅ Part 8 — Stretch Goals (CLI args, dart format, dart analyze)
+
+## How to Run
