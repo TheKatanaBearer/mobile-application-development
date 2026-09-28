@@ -83,15 +83,15 @@ A pure Dart console program for a small campus library desk. It practises functi
 
 **Parts 1–3**
 
-![Output Parts 1-3](week3_output_1.png)
+![Output Parts 1-3](lab_task_3/week3_output_1.png)
 
 **Parts 3–5**
 
-![Output Parts 3-5](week3_output_2.png)
+![Output Parts 3-5](lab_task_3/week3_output_2.png)
 
 **Part 6**
 
-![Output Part 6](week3_output_3.png)
+![Output Part 6](lab_task_3/week3_output_3.png)
 
 ## How to Run
 ```
