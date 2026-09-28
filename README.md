@@ -56,3 +56,45 @@ A Dart console app built as part of Lab Task 2, exercising core Dart fundamental
 - ✅ Part 8 — Stretch Goals (CLI args, dart format, dart analyze)
 
 ## How to Run
+```
+dart run main.dart
+```
+
+
+# Week 3 Lab — Library Desk Assistant
+
+**Name:** Hamza Khan Tariq
+**Roll Number:** 04072313050
+**Course:** CS442 - Mobile Application Development
+**Date:** September 28, 2026
+
+## About
+A pure Dart console program for a small campus library desk. It practises functions, closures, collections, generics, error handling and async code on one shared book dataset. No Flutter UI.
+
+## Parts Completed
+- ✅ Part 1 — Functions & Parameters (positional, optional, named, default, arrow)
+- ✅ Part 2 — Closures, Higher-Order Functions & Recursion
+- ✅ Part 3 — Collections: List, Map & Set
+- ✅ Part 4 — Generics (`Box<T>`, `firstOr<T>`, `Pair<A, B>`)
+- ✅ Part 5 — Error Handling & Custom Exceptions
+- ✅ Part 6 — Future & async/await
+
+## Screenshots
+
+**Parts 1–3**
+
+![Output Parts 1-3](week3_output_1.png)
+
+**Parts 3–5**
+
+![Output Parts 3-5](week3_output_2.png)
+
+**Part 6**
+
+![Output Part 6](week3_output_3.png)
+
+## How to Run
+```
+dart run Week3.dart
+```
+Or paste `Week3.dart` into [DartPad](https://dartpad.dev) and press Run.
