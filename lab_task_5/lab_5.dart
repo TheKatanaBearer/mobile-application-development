@@ -25,11 +25,17 @@ final int shelfSize = 3 + u % 4;            // items on the shelf in Steps 9-10
 // ===========================================================================
 
 //===============step 1 classes
-abstract class LibraryItem{
+abstract class LibraryItem {
   final String title;
   final int year;
 
-  LibraryItem(this.title , this.year);
+  static int created = 0;
+
+  LibraryItem(this.title, this.year) {
+    created++;
+  }
+
+  static int capFee(int fee) => fee > feeCap ? feeCap : fee;
 
   String describe() => '$title ($year)';
 
@@ -62,7 +68,7 @@ class Book extends LibraryItem with Renewable implements Borrowable{
 
   @override
 
-  String describe() => '${super.describe()} , $pages pages';
+  String describe() => '${super.describe()}, $pages pages';
 
 
   @override
@@ -91,7 +97,7 @@ class Magazine extends LibraryItem{
 
  @override
 
- String describe () => '${super.describe()} , Issue $issue';
+ String describe() => '${super.describe()}, issue $issue';
 
  @override
  int lateFee(int days) => days * (feePerDay ~/ 2);
@@ -115,7 +121,7 @@ class Dvd extends LibraryItem with Renewable {
   Dvd(super.title , super.year , this.minutes);
 
   @override
-  String describe () => '${super.describe()} , $minutes min ';
+ String describe() => '${super.describe()}, $minutes min';
 
   @override
   int lateFee(int days) => days * feePerDay * 2;
@@ -137,7 +143,7 @@ enum MemberType{
 
 
 extension MoneyText on int{
-  String get rs => 'Rs $this';
+ String get rs => 'Rs $this';
 
 }
 
@@ -153,8 +159,39 @@ extension ShelfMath on List<LibraryItem>{
   int totalLateFee(int days) => fold(0, ( sum , i ) => sum + i.lateFee(days));
 }
 
+class Fine {
+  final int amount;
+  const Fine(this.amount);
+
+  Fine operator +(Fine o) => Fine(amount + o.amount);
+
+  bool operator >(Fine o) => amount > o.amount;
+
+  @override
+  bool operator ==(Object other) => other is Fine && other.amount == amount;
+
+  @override
+  int get hashCode => amount.hashCode;
+
+  @override
+  String toString() => 'Fine($amount)';
+}
 
 
+List<LibraryItem> buildShelf() {
+  final shelf = <LibraryItem>[];
+  for (var k = 0; k < shelfSize; k++) {
+    final i = (u + k) % 10;
+    if (k % 3 == 0) {
+      shelf.add(Book(titles[i], yearOf(i), 100 + 3 * seed));
+    } else if (k % 3 == 1) {
+      shelf.add(Magazine(titles[i], yearOf(i), 1 + (t + k) % 12));
+    } else {
+      shelf.add(Dvd(titles[i], yearOf(i), 90 + seed % 40));
+    }
+  }
+  return shelf;
+}
 
 
 
@@ -176,10 +213,9 @@ void step1() { print('--- Step 1 ---');
 
 final b = mainBook();
 LibraryItem item = b;
-print('Step 1: Book: ${b.title}, Year: ${b.year}, Pages: ${b.pages}');
-print('step 1: stored as LibraryItem: ${item.title}');
-print('Step 1 : runtimeType = ${item.runtimeType}');
-
+  print('Step 1: ${b.title} (${b.year}), ${b.pages} pages');
+  print('Step 1: stored as LibraryItem: ${item.title}');
+  print('Step 1: runtimeType = ${item.runtimeType}');
 // think : item.pages is a compile error because dart checks the variable's
 // declared type (LibraryItem) , and LibraryItem has no "pages" . The object 
 // really is a book , but the compiler only trusts the type written on the
@@ -190,8 +226,8 @@ print('Step 1 : runtimeType = ${item.runtimeType}');
 
 }
 void step2() { print('--- Step 2 ---');
-print('step 2 : ${mainBook().describe()}');
-print('step 2 : ${mainMagazine().describe()}');
+  print('Step 2: ${mainBook().describe()}');
+  print('Step 2: ${mainMagazine().describe()}');
 
 // think : without @override and with the typo "describe()" , dart would
 // quietly create a brand-new method instead of replacing the old one.
@@ -202,10 +238,12 @@ print('step 2 : ${mainMagazine().describe()}');
 }
 void step3() { print('--- Step 3 ---');
 
-print('step 3: Book late fee for $daysLate days ='
-      '${mainMagazine().lateFee(daysLate)}');
-print('step 3: Dvd late fee for $daysLate days = '
-      '${mainDvd().lateFee(daysLate)}');
+print('Step 3: Book late fee for $daysLate days = '
+    '${mainBook().lateFee(daysLate)}');
+print('Step 3: Magazine late fee for $daysLate days = '
+    '${mainMagazine().lateFee(daysLate)}');
+print('Step 3: Dvd late fee for $daysLate days = '
+    '${mainDvd().lateFee(daysLate)}');
 
 // Think : LibraryItem( 'x' , 2000 ) gives "abstract classes cant be 
 // instantiated" . An abstract class has a method (lateFee) with no body, so
@@ -215,17 +253,10 @@ print('step 3: Dvd late fee for $daysLate days = '
  }
 void step4() { print('--- Step 4 ---');
 
-final book = mainBook();
-print('step 4 : available? ${book.isAvailable}');
-book.borrow();
-
-print('step 4 : after borrow ? ${book.isAvailable}');
-book.giveBack();
-print('step 4: after return? ${book.isAvailable}');
-final List<LibraryItem> items = [mainBook(), mainMagazine(), mainDvd()];
-
-for(final item in items){
-  print('step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
+  print('Step 4: available? ${book.isAvailable}');
+  print('Step 4: after borrow? ${book.isAvailable}');
+  print('Step 4: after return? ${book.isAvailable}');
+  print('Step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
 
 
 }
@@ -268,9 +299,9 @@ final type = MemberType.values[seed % 3];
 
 final fee = mainBook().lateFee(daysLate);
 
-print('step 6: member type = ${type.name} (index ${type.index})');
-print('step 6: max loans = ${type.maxLoans}');
-print('step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount');
+  print('Step 6: member type = ${type.name} (index ${type.index})');
+  print('Step 6: max loans = ${type.maxLoans}');
+  print('Step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount');
 
 // think : MemberType.student is checked  by the compiler, so a typo is an
 // error straight away and the editor can autocompleted it. the string
@@ -289,12 +320,40 @@ print('step 7: shelf fee for $daysLate days = '
       '${shelf.totalLateFee(daysLate).rs}');
 
 // think: with 72.rs the behaviour reads like part of the int itself , shows
-// up in complete 
+// up in autocomplete on any int , and chains left to right
+// (x.rs) instead of nesting calls like rs(rs2(x))
 
 
 
 
  }
-void step8() { print('--- Step 8 ---'); }
-void step9() { print('--- Step 9 ---'); }
+void step8() { print('--- Step 8 ---'); 
+ final f1 = Fine(mainBook().lateFee(daysLate));
+  final f2 = Fine(mainMagazine().lateFee(daysLate));
+  print('Step 8: $f1 + $f2 = ${f1 + f2}');
+  print('Step 8: first bigger? ${f1 > f2}');
+  print('Step 8: equal copies? ${f1 == Fine(f1.amount)}');
+  print('Step 8: set size = ${{f1, Fine(f1.amount), f2}.length}');
+  // Think: without my hashCode the set size becomes 3, because Fine(x) and
+  // its copy get different default hash codes and the set puts them in
+  // different buckets before it ever calls ==. Equal objects must have equal
+  // hash codes, so Dart expects == and hashCode to be written together.
+
+
+}
+void step9() { print('--- Step 9 ---');
+LibraryItem.created = 0;
+  buildShelf();
+  final shelf = buildShelf();
+  print('Step 9: items created = ${LibraryItem.created}');
+  print('Step 9: capped fee = '
+      '${LibraryItem.capFee(shelf.first.lateFee(daysBig))} (cap $feeCap)');
+  print('Step 9: const copies identical? '
+      '${identical(const Fine(10), const Fine(10))}');
+  print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}');
+  // Think: a static member belongs to the class, not to any object, so
+  // LibraryItem.created can be read before any object exists.
+
+
+ }
 void step10() { print('--- Step 10 ---'); }
