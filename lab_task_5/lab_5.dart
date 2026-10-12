@@ -136,6 +136,23 @@ enum MemberType{
 }
 
 
+extension MoneyText on int{
+  String get rs => 'Rs $this';
+
+}
+
+
+extension Initials on String{
+  String get initials => split(' ').map((w)=> w[0]).join();
+
+}
+
+
+extension ShelfMath on List<LibraryItem>{
+
+  int totalLateFee(int days) => fold(0, ( sum , i ) => sum + i.lateFee(days));
+}
+
 
 
 
@@ -261,7 +278,23 @@ print('step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount');
 
 
  }
-void step7() { print('--- Step 7 ---'); }
+void step7() { print('--- Step 7 ---');
+
+final type = MemberType.values[seed % 3];
+final discounted = type.applyDiscount(mainBook().lateFee(daysLate));
+final shelf = <LibraryItem>[mainBook() , mainMagazine() , mainDvd()];
+print('Step 7: ${discounted.rs}');
+print('step 7: initials of "${titles[u]}" = ${titles[u].initials}');
+print('step 7: shelf fee for $daysLate days = '
+      '${shelf.totalLateFee(daysLate).rs}');
+
+// think: with 72.rs the behaviour reads like part of the int itself , shows
+// up in complete 
+
+
+
+
+ }
 void step8() { print('--- Step 8 ---'); }
 void step9() { print('--- Step 9 ---'); }
 void step10() { print('--- Step 10 ---'); }
