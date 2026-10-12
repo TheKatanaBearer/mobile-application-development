@@ -31,6 +31,7 @@ class LibraryItem{
 
   LibraryItem(this.title , this.year);
 
+  String describe() => '$title ($year)';
 }
 
 class Book extends LibraryItem{
@@ -38,9 +39,30 @@ class Book extends LibraryItem{
 
   Book(super.title , super.year , this.pages);
 
+  @override
+
+  String describe() => '${super.describe()} , $pages pages';
+
+
 }
 
 Book mainBook() => Book(titles[u] , yearOf(u), 100 + 3 * seed);
+
+class Magazine extends LibraryItem{
+  final int issue;
+
+ Magazine(super.title , super.year , this.issue);
+
+ @override
+
+ String describe () => '${super.describe()} , Issue $issue';
+}
+
+Magazine mainMagazine(){
+  final i = ( u + 1 ) % 10;
+  return Magazine(titles[i] , yearOf(i) , 1+ (t+u) % 12);
+
+}
 
 
 
@@ -77,7 +99,17 @@ print('Step 1 : runtimeType = ${item.runtimeType}');
 
 
 }
-void step2() { print('--- Step 2 ---'); }
+void step2() { print('--- Step 2 ---');
+print('step 2 : ${mainBook().describe()}');
+print('step 2 : ${mainMagazine().describe()}');
+
+// think : without @override and with the typo "describe()" , dart would
+// quietly create a brand-new method instead of replacing the old one.
+// calling describe() would then run the parents version , so the pages would be missing from the output
+// and nothing would warn me
+
+
+}
 void step3() { print('--- Step 3 ---'); }
 void step4() { print('--- Step 4 ---'); }
 void step5() { print('--- Step 5 ---'); }
