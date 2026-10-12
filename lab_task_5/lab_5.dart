@@ -36,8 +36,16 @@ abstract class LibraryItem{
   int lateFee(int days); // no body
 }
 
-class Book extends LibraryItem{
+
+abstract class Borrowable{
+  bool get isAvailable;
+  void borrow();
+  void giveBack();
+}
+
+class Book extends LibraryItem implements Borrowable{
   final int pages;
+  bool _out = false;
 
   Book(super.title , super.year , this.pages);
 
@@ -48,6 +56,18 @@ class Book extends LibraryItem{
 
   @override
   int lateFee(int days) => days * feePerDay;
+
+  @override bool get isAvailable => !_out ; 
+
+  @override
+   void borrow() => _out = true;
+
+   @override 
+
+   void giveBack() => _out = false ; 
+
+
+
 
 }
 
@@ -90,6 +110,9 @@ class Dvd extends LibraryItem{
   int lateFee(int days) => days * feePerDay * 2;
 
 }
+
+
+
 
 
 
@@ -150,7 +173,35 @@ print('step 3: Dvd late fee for $daysLate days = '
 
 
  }
-void step4() { print('--- Step 4 ---'); }
+void step4() { print('--- Step 4 ---');
+
+final book = mainBook();
+print('step 4 : available? ${book.isAvailable}');
+book.borrow();
+
+print('step 4 : after borrow ? ${book.isAvailable}');
+book.giveBack();
+print('step 4: after return? ${book.isAvailable}');
+final List<LibraryItem> items = [mainBook(), mainMagazine(), mainDvd()];
+
+for(final item in items){
+  print('step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
+
+
+}
+
+
+// Think : extends Borrowable would have copied any ready-made code 
+// (fields and method bodies ) from Borrowable into Book for free. That is 
+// not what I wanted : Borrowable is only  a promise with no code, and 
+// implements forces Book to write its own isAvailable , borrow , giveBack.
+
+
+
+
+
+
+ }
 void step5() { print('--- Step 5 ---'); }
 void step6() { print('--- Step 6 ---'); }
 void step7() { print('--- Step 7 ---'); }
