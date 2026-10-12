@@ -123,6 +123,18 @@ class Dvd extends LibraryItem with Renewable {
 }
 
 
+enum MemberType{
+  student(3,50),
+  faculty(10,20),
+  guest(1,0);
+
+  final int maxLoans;
+  final int discountPercent;
+  const MemberType(this.maxLoans , this.discountPercent);
+
+  int applyDiscount(int fee) => fee - (fee * discountPercent) ~/ 100;
+}
+
 
 
 
@@ -233,7 +245,22 @@ print('Step 5: dvd can renew too? ${mainDvd().renew(1)}');
 
 
  }
-void step6() { print('--- Step 6 ---'); }
+void step6() { print('--- Step 6 ---');
+
+final type = MemberType.values[seed % 3];
+
+final fee = mainBook().lateFee(daysLate);
+
+print('step 6: member type = ${type.name} (index ${type.index})');
+print('step 6: max loans = ${type.maxLoans}');
+print('step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount');
+
+// think : MemberType.student is checked  by the compiler, so a typo is an
+// error straight away and the editor can autocompleted it. the string
+// 'student' can be mistyped ('student') and only fail later, silently
+
+
+ }
 void step7() { print('--- Step 7 ---'); }
 void step8() { print('--- Step 8 ---'); }
 void step9() { print('--- Step 9 ---'); }
