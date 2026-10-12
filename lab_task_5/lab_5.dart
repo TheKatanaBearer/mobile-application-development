@@ -43,7 +43,20 @@ abstract class Borrowable{
   void giveBack();
 }
 
-class Book extends LibraryItem implements Borrowable{
+
+mixin Renewable {
+  int renewals = 0;
+  
+  bool renew(int limit){
+    if(renewals >= limit){
+      return false;
+      renewals++;
+      return true;
+    }
+  }
+}
+
+class Book extends LibraryItem with renewable implements Borrowable{
   final int pages;
   bool _out = false;
 
@@ -98,7 +111,7 @@ Dvd mainDvd(){
 
 }
 
-class Dvd extends LibraryItem{
+class Dvd extends LibraryItem with renewable {
   final int minutes;
 
   Dvd(super.title , super.year , this.minutes);
@@ -202,7 +215,26 @@ for(final item in items){
 
 
  }
-void step5() { print('--- Step 5 ---'); }
+void step5() { print('--- Step 5 ---');
+
+final book = mainBook();
+var ok = 0;
+for(var n =0; n< renewAttempts ; n++){
+  if( book.renew(renewLimit)) ok++;
+}
+
+print('Step 5: renewed $ok of $renewAttempts attempts (limit $newnewLimit)');
+print('Step 5: renew once more? ${book.renew(renewLimit)}');
+print('Step 5: dvd can renew too? ${mainDvd().renew(1)}');
+  // Think: Book and Dvd need the same renew code but Magazine must not have
+  // it. Putting renew in LibraryItem would hand it to Magazine too. A mixin
+  // lets me share the code with only the classes I choose, sideways,
+  // without changing the inheritance tree.
+
+
+
+
+ }
 void step6() { print('--- Step 6 ---'); }
 void step7() { print('--- Step 7 ---'); }
 void step8() { print('--- Step 8 ---'); }
