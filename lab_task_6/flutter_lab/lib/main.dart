@@ -29,6 +29,7 @@ final List<String> lifecycleLog = <String>[];
 
 void main() => runApp(const LabApp());
 
+// Stateless: LabApp only wraps the app and never changes.
 // Keep the name LabApp and its const constructor: the checker uses them.
 class LabApp extends StatelessWidget {
   const LabApp({super.key});
@@ -49,6 +50,8 @@ class LabApp extends StatelessWidget {
 // Think (Step 3): the tree is LabApp > MaterialApp > HomePage > Scaffold >
 // SingleChildScrollView > Column > Row > Text('Max: ..'). Counting LabApp
 // as level 1, the Max text is 8 levels deep.
+//
+// Stateless: HomePage only lays out the page and holds no changing data.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -87,6 +90,8 @@ class HomePage extends StatelessWidget {
 // Think: the fields are final because a StatelessWidget never changes after
 // it is created. Without final, the analyzer warns that the fields of an
 // immutable widget class must be final.
+//
+// Stateless: StudentCard only shows the values it was given.
 class StudentCard extends StatelessWidget {
   final String name;
   final String roll;
@@ -117,45 +122,12 @@ class StudentCard extends StatelessWidget {
   }
 }
 
-
-class BuggyCounter extends StatefulWidget {
-  const BuggyCounter({super.key});
-
-  @override
-  State<BuggyCounter> createState() => _BuggyCounterState();
-}
-
-// Think (Step 7): after three taps _clicks inside the State was 3, but the
-// screen still showed 0, because nothing told Flutter to call build again.
-// setState changes the value and then schedules the rebuild
-class _BuggyCounterState extends State<BuggyCounter> {
-  int _clicks = 0;
-
-  @override
- Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text('Bug clicks: $_clicks', key: const Key('bug-text')),
-        const SizedBox(width: 12),
-        ElevatedButton(
-          key: const Key('bug-button'),
-          onPressed: () {
-            setState(() {
-              _clicks += bugStep;
-            });
-          },
-          child: Text('+$bugStep'),
-        ),
-      ],
-    );
-  }
-}
-
-
 // Think (Step 4): GoalBanner does not need setState because it is a
 // StatelessWidget: its count and max are final and never change inside it.
 // To show a new count, the parent has to build a new GoalBanner and pass
 // the new number in.
+//
+// Stateless: GoalBanner only displays the count its parent passes in.
 class GoalBanner extends StatelessWidget {
   final int count;
   final int max;
@@ -172,13 +144,12 @@ class GoalBanner extends StatelessWidget {
   }
 }
 
-
 // Think (Step 5): Tally has no fields that change, but _TallyState does.
 // There are two classes because the widget is only a configuration that
 // Flutter throws away and recreates often, while the State object is the
 // memory that stays alive, so _count survives each rebuild.
-
-
+//
+// Stateful: Tally needs a count that changes when buttons are tapped.
 class Tally extends StatefulWidget {
   const Tally({super.key});
 
@@ -191,26 +162,24 @@ class Tally extends StatefulWidget {
 // starts the app from scratch, so the count goes back to startCount. The
 // widget is only the configuration, while the State is the memory that
 // survives a hot reload but not a hot restart.
-
 class _TallyState extends State<Tally> {
   int _count = startCount;
 
   void _plus() {
-     setState(() {
+    setState(() {
       _count += stepSize;
       if (_count > maxCount) _count = maxCount;
     });
   }
 
-
-    void _minus() {
+  void _minus() {
     setState(() {
       _count -= stepSize;
       if (_count < 0) _count = 0;
     });
   }
 
-   void _reset() {
+  void _reset() {
     setState(() {
       _count = startCount;
     });
@@ -230,7 +199,13 @@ class _TallyState extends State<Tally> {
               onPressed: _plus,
               child: Text('+$stepSize'),
             ),
-                const SizedBox(width: 8),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              key: const Key('minus'),
+              onPressed: _minus,
+              child: Text('-$stepSize'),
+            ),
+            const SizedBox(width: 8),
             OutlinedButton(
               key: const Key('reset'),
               onPressed: _reset,
@@ -241,47 +216,18 @@ class _TallyState extends State<Tally> {
       ],
     );
   }
-  
 }
-
 
 // Think (Step 8): without _timer.cancel() in dispose, the timer keeps
 // ticking after the widget is removed and calls setState on a State that no
 // longer exists. The console shows "setState() called after dispose()".
+//
+// Stateful: Countdown needs a number that changes every second.
 class Countdown extends StatefulWidget {
   const Countdown({super.key});
 
   @override
   State<Countdown> createState() => _CountdownState();
-}
-
-class _CountdownState extends State<Countdown> {
-  late int _left;
-  late Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _left = startSeconds;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() => _left--);
-      if (_left <= 0) timer.cancel(); // stop at zero
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_left > 0) {
-      return Text('Time left: $_left s', key: const Key('time-left'));
-    }
-    return const Text('Time is up!', key: Key('time-left'));
-  }
 }
 
 // Think (Step 9): it goes up by one per second because each timer tick
@@ -327,4 +273,37 @@ class _CountdownState extends State<Countdown> {
   }
 }
 
+// ---- Provided for Step 7. It has a bug on purpose. Do not rename anything.
+// Stateful: BuggyCounter needs a click count that changes on each tap.
+class BuggyCounter extends StatefulWidget {
+  const BuggyCounter({super.key});
 
+  @override
+  State<BuggyCounter> createState() => _BuggyCounterState();
+}
+
+// Think (Step 7): after three taps _clicks inside the State was 3, but the
+// screen still showed 0, because nothing told Flutter to call build again.
+// setState changes the value and then schedules the rebuild.
+class _BuggyCounterState extends State<BuggyCounter> {
+  int _clicks = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('Bug clicks: $_clicks', key: const Key('bug-text')),
+        const SizedBox(width: 12),
+        ElevatedButton(
+          key: const Key('bug-button'),
+          onPressed: () {
+            setState(() {
+              _clicks += bugStep;
+            });
+          },
+          child: Text('+$bugStep'),
+        ),
+      ],
+    );
+  }
+}
