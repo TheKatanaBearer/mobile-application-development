@@ -71,8 +71,10 @@ class HomePage extends StatelessWidget {
                 Text('Max: $maxCount', key: const Key('info-max')),
               ],
             ),
-             const SizedBox(height: 12),
-             const Tally(),
+            const SizedBox(height: 12),
+            const Tally(),
+            const SizedBox(height: 12),
+            const BuggyCounter(),
           ],
         ),
       ),
@@ -113,7 +115,7 @@ class StudentCard extends StatelessWidget {
   }
 }
 
-// ---- Provided for Step 7. It has a bug on purpose. Do not rename anything.
+
 class BuggyCounter extends StatefulWidget {
   const BuggyCounter({super.key});
 
@@ -121,11 +123,14 @@ class BuggyCounter extends StatefulWidget {
   State<BuggyCounter> createState() => _BuggyCounterState();
 }
 
+// Think (Step 7): after three taps _clicks inside the State was 3, but the
+// screen still showed 0, because nothing told Flutter to call build again.
+// setState changes the value and then schedules the rebuild
 class _BuggyCounterState extends State<BuggyCounter> {
   int _clicks = 0;
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return Row(
       children: [
         Text('Bug clicks: $_clicks', key: const Key('bug-text')),
@@ -133,7 +138,9 @@ class _BuggyCounterState extends State<BuggyCounter> {
         ElevatedButton(
           key: const Key('bug-button'),
           onPressed: () {
-            _clicks += bugStep;
+            setState(() {
+              _clicks += bugStep;
+            });
           },
           child: Text('+$bugStep'),
         ),
@@ -233,3 +240,6 @@ class _TallyState extends State<Tally> {
     );
   }
 }
+
+
+
