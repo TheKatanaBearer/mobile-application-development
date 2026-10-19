@@ -45,6 +45,10 @@ class LabApp extends StatelessWidget {
 // Think: runApp receives LabApp. It is the root widget, so everything else
 // in the app sits under it. MaterialApp receives HomePage as `home`, which
 // is only the first screen the app shows, not the app itself.
+//
+// Think (Step 3): the tree is LabApp > MaterialApp > HomePage > Scaffold >
+// SingleChildScrollView > Column > Row > Text('Max: ..'). Counting LabApp
+// as level 1, the Max text is 8 levels deep.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -52,14 +56,31 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Study Tracker: $course')),
-      body: StudentCard(name: studentName, roll: rollNo, course: course),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StudentCard(name: studentName, roll: rollNo, course: course),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Start: $startCount', key: const Key('info-start')),
+                Text('Step: $stepSize', key: const Key('info-step')),
+                Text('Max: $maxCount', key: const Key('info-max')),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-
-"// Think: the fields are final because a StatelessWidget never changes after`n// it is created. Without final, the analyzer warns that the fields of an`n// immutable widget class must be final.`nclass StudentCard extends"
-
+// Think: the fields are final because a StatelessWidget never changes after
+// it is created. Without final, the analyzer warns that the fields of an
+// immutable widget class must be final.
 class StudentCard extends StatelessWidget {
   final String name;
   final String roll;
