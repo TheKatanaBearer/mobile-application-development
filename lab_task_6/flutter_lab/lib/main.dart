@@ -284,5 +284,47 @@ class _CountdownState extends State<Countdown> {
   }
 }
 
+// Think (Step 9): it goes up by one per second because each timer tick
+// calls setState exactly once, and one setState schedules one rebuild. To
+// prove dispose ran, print lifecycleLog (for example with
+// print(lifecycleLog) at the end of dispose) and look for 'dispose'.
+class _CountdownState extends State<Countdown> {
+  late int _left;
+  late Timer _timer;
+  int _builds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    lifecycleLog.add('initState');
+    _left = startSeconds;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() => _left--);
+      if (_left <= 0) timer.cancel(); // stop at zero
+    });
+  }
+
+  @override
+  void dispose() {
+    lifecycleLog.add('dispose');
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _builds++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_left > 0)
+          Text('Time left: $_left s', key: const Key('time-left'))
+        else
+          const Text('Time is up!', key: Key('time-left')),
+        Text('Builds: $_builds', key: const Key('builds')),
+      ],
+    );
+  }
+}
 
 
