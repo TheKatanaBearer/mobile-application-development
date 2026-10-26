@@ -100,6 +100,8 @@ const Welcome(),
             const Clock(),
             const SizedBox(height: 12),
             const SwapBoard(),
+            const SizedBox(height: 12),
+            const InfoPanel(),
             // Add each new widget BELOW the previous one, in the order the
             // steps tell you, with a SizedBox(height: 12) between widgets.
           ],
@@ -278,41 +280,6 @@ class _TileState extends State<Tile> {
       );
 }
 
-class Welcome extends StatelessWidget {
-  const Welcome({super.key});
-
-  // Think: this is composition — Tile wraps an ElevatedButton instead of
-  // extending it. Flutter prefers it because inheritance [building by
-  // subclassing] needs one new class per variation, which explodes; wrapping
-  // small widgets combines freely, like Lego.
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Welcome, $studentName', key: const Key('welcome')),
-    );
-  }
-}
-
-class Tile extends StatefulWidget {
-  const Tile(this.label, {super.key});
-
-  final String label;
-
-  @override
-  State<Tile> createState() => _TileState();
-}
-
-class _TileState extends State<Tile> {
-  int taps = 0;
-
-  @override
-  Widget build(BuildContext context) => ElevatedButton(
-        onPressed: () => setState(() => taps++),
-        child: Text('${widget.label}: $taps'),
-      );
-}
-
 class SwapBoard extends StatefulWidget {
   const SwapBoard({super.key});
 
@@ -344,6 +311,42 @@ class _SwapBoardState extends State<SwapBoard> {
           key: const Key('swap'),
           onPressed: swap,
           child: const Text('Swap'),
+        ),
+      ],
+    );
+  }
+}
+
+class InfoPanel extends StatelessWidget {
+  const InfoPanel({super.key});
+
+  // Think: in a Column the main axis is vertical, so crossAxisAlignment acts
+  // on the horizontal [left-right] axis — centre moves children sideways, not
+  // up or down. mainAxisAlignment is what moves them vertically.
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          key: const Key('info-row'),
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('Start: $startSec s', key: const Key('row-a')),
+            Text('Tick: $tick s', key: const Key('row-b')),
+            Text('Stop: $stopAt s', key: const Key('row-c')),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Column(
+          key: const Key('info-col'),
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text('Name: $studentName', key: const Key('col-a')),
+            Text('Roll no: $rollNo', key: const Key('col-b')),
+            Text('Course: $course', key: const Key('col-c')),
+          ],
         ),
       ],
     );
