@@ -95,8 +95,6 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
-            const SettingsCard(),
-            const SizedBox(height: 12),
             const Clock(),
             // Add each new widget BELOW the previous one, in the order the
             // steps tell you, with a SizedBox(height: 12) between widgets.
@@ -164,24 +162,46 @@ class Clock extends StatefulWidget {
 class _ClockState extends State<Clock> {
   late Timer _timer;
   int _seconds = startSec;
+  int _builds = 0;
 
   @override
   void initState() {
     super.initState();
+    lifecycleLog.add('initState');
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _seconds += tick);
-      if (_seconds >= stopAt) timer.cancel(); // stop at your limit
+      if (_seconds >= stopAt) timer.cancel();
     });
   }
 
-  // Think: initState runs exactly once per State object; build runs on every
-  // rebuild. Started in build, each rebuild would spawn [create] another Timer,
-  // all ticking at once, so the number would climb by 2, 3, 4... per second —
-  // the clock would accelerate [get faster and faster] and never stop cleanly.
+  @override
+  void dispose() {
+    _timer.cancel();
+    lifecycleLog.add('dispose');
+    super.dispose();
+  }
+
+  // Think (Step 1): initState runs exactly once per State object; build runs
+  // on every rebuild. Started in build, each rebuild would spawn [create]
+  // another Timer, all ticking at once, so the clock would accelerate
+  // [get faster and faster] and never stop cleanly.
+
+  // Think (Step 2): Builds rises by one per second because one Timer tick
+  // calls setState once, and setState schedules exactly one rebuild. Two per
+  // second would mean two live Timers. Without _timer.cancel() in dispose, the
+  // Timer outlives [keeps running after] the widget and calls setState on a
+  // State no longer mounted [attached to the tree], throwing
+  // "setState() called after dispose()".
 
   @override
   Widget build(BuildContext context) {
-    return Text('Session: $_seconds s', key: const Key('clock'));
+    _builds++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: $_seconds s', key: const Key('clock')),
+        Text('Builds: $_builds', key: const Key('builds')),
+      ],
+    );
   }
 }
-
