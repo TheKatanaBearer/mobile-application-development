@@ -1,4 +1,4 @@
-// main.dart - Team Board lab
+﻿// main.dart - Team Board lab
 import 'dart:async';
  
 import 'package:flutter/material.dart';
@@ -94,6 +94,8 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SettingsCard(),
+            const SizedBox(height: 12),
+const Welcome(),
             const SizedBox(height: 12),
             const Clock(),
             // Add each new widget BELOW the previous one, in the order the
@@ -212,7 +214,7 @@ class Probe extends StatelessWidget {
 
   final int seconds;
 
-  // Think: the Widget is cheap and thrown away — a fresh Probe object is built
+  // Think: the Widget is cheap and thrown away â€” a fresh Probe object is built
   // every second, so its identityHashCode changes. The Element is kept: it
   // sits at one spot in the tree, holds the State, and its number never moves.
   // The third tree is the RenderObject, also long-lived [kept], created by the
@@ -237,4 +239,74 @@ class Probe extends StatelessWidget {
       ],
     );
   }
+}
+
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
+
+  // Think: this is composition â€” Tile wraps an ElevatedButton instead of
+  // extending it. Flutter prefers it because inheritance [building by
+  // subclassing] needs one new class per variation, which explodes; wrapping
+  // small widgets combines freely, like Lego.
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Welcome, $studentName', key: const Key('welcome')),
+    );
+  }
+}
+
+class Tile extends StatefulWidget {
+  const Tile(this.label, {super.key});
+
+  final String label;
+
+  @override
+  State<Tile> createState() => _TileState();
+}
+
+class _TileState extends State<Tile> {
+  int taps = 0;
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+        onPressed: () => setState(() => taps++),
+        child: Text('${widget.label}: $taps'),
+      );
+}
+
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
+
+  // Think: this is composition — Tile wraps an ElevatedButton instead of
+  // extending it. Flutter prefers it because inheritance [building by
+  // subclassing] needs one new class per variation, which explodes; wrapping
+  // small widgets combines freely, like Lego.
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Welcome, $studentName', key: const Key('welcome')),
+    );
+  }
+}
+
+class Tile extends StatefulWidget {
+  const Tile(this.label, {super.key});
+
+  final String label;
+
+  @override
+  State<Tile> createState() => _TileState();
+}
+
+class _TileState extends State<Tile> {
+  int taps = 0;
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+        onPressed: () => setState(() => taps++),
+        child: Text('${widget.label}: $taps'),
+      );
 }
